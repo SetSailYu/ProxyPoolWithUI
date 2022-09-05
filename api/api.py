@@ -30,7 +30,7 @@ app = Flask(
 def ping():
     return 'API OK'
 
-# 随机获取一个可用代理，如果没有可用代理则返回空白
+# 随机获取一个可用代理，如果没有可用代理则返回 No
 @app.route('/fetch_random', methods=['GET'])
 def fetch_random():
     proxies = conn.getValidatedRandom(1)
@@ -38,7 +38,27 @@ def fetch_random():
         p = proxies[0]
         return f'{p.protocol}://{p.ip}:{p.port}'
     else:
-        return ''
+        return 'No'
+
+# 随机获取一个socks类型可用代理，如果没有可用代理则返回空白
+@app.route('/fetch_socks_random', methods=['GET'])
+def fetch_socks_random():
+    proxies = conn.getProtocolValidatedRandom('socks', 1)
+    if len(proxies) > 0:
+        p = proxies[0]
+        return f'{p.protocol}://{p.ip}:{p.port}'
+    else:
+        return 'No'
+
+# 随机获取一个http类型可用代理，如果没有可用代理则返回空白
+@app.route('/fetch_http_random', methods=['GET'])
+def fetch_http_random():
+    proxies = conn.getProtocolValidatedRandom('http', 1)
+    if len(proxies) > 0:
+        p = proxies[0]
+        return f'{p.protocol}://{p.ip}:{p.port}'
+    else:
+        return 'No'
 
 # 获取所有可用代理，如果没有可用代理则返回空白
 @app.route('/fetch_all', methods=['GET'])
@@ -131,7 +151,7 @@ def main(proc_lock):
     if proc_lock is not None:
         conn.set_proc_lock(proc_lock)
     # 因为默认sqlite3中，同一个数据库连接不能在多线程环境下使用，所以这里需要禁用flask的多线程
-    app.run(host='0.0.0.0', port=5000, threaded=False)
+    app.run(host='0.0.0.0', port =9000, threaded=False)
 
 if __name__ == '__main__':
     main(None)

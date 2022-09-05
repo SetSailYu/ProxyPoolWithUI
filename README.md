@@ -72,7 +72,7 @@ python3 main.py
 
 ![term](docs/term.png)
 
-4. 使用浏览器打开`http://localhost:5000`，可以看到WEB管理界面。
+4. 使用浏览器打开`http://localhost:9000`，可以看到WEB管理界面。
 
 ## Docker构建项目
 
@@ -92,7 +92,7 @@ docker build --tag proxy_pool .
 3. 运行镜像
 
 ```bash
-docker run -p 5000:5000 -v /root/ProxyPoolWithUI:/proxy -d proxy_pool
+docker run -p 9000:9000 -v /root/ProxyPoolWithUI:/proxy -d proxy_pool
 ```
 `/root/ProxyPoolWithUI`为clone下来的项目目录路径，请自行更改
 
@@ -103,11 +103,11 @@ docker run -p 5000:5000 -v /root/ProxyPoolWithUI:/proxy -d proxy_pool
 
 项目启动之后，会自动爬取并检测代理是否可用，因此我们只需要关注如何使用代理即可。
 
-* `http://localhost:5000/fetch_random` : 随机获取一个可用代理，如果没有可用代理则返回空白
+* `http://localhost:9000/fetch_random` : 随机获取一个可用代理，如果没有可用代理则返回空白
   
   返回示例 : `http://127.0.0.1:8080`
 
-* `http://localhost:5000/fetch_all` : 获取所有可用代理，如果没有可用代理则返回空白
+* `http://localhost:9000/fetch_all` : 获取所有可用代理，如果没有可用代理则返回空白
   
   返回示例 : `http://127.0.0.1:8080,http://127.0.0.1:8081`
 
@@ -121,7 +121,7 @@ docker run -p 5000:5000 -v /root/ProxyPoolWithUI:/proxy -d proxy_pool
 import requests
 
 def main():
-    proxy_uri = requests.get('http://localhost:5000/fetch_random').text
+    proxy_uri = requests.get('http://localhost:9000/fetch_random').text
     if len(proxy_uri) == 0:
         print(u'暂时没有可用代理')
         return

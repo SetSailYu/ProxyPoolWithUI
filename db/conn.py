@@ -131,6 +131,25 @@ def getValidatedRandom(max_count):
     proc_lock.release()
     return proxies
 
+def getProtocolValidatedRandom(protocol, max_count):
+    """
+    从通过了验证的代理中，随机选择[指定代理协议]max_count个代理返回
+    protocol 表示代理协议名称[socks，http]
+    max_count<=0表示不做数量限制
+    返回 : list[Proxy]
+    """
+    conn_lock.acquire()
+    proc_lock.acquire()
+    if max_count > 0:
+        r = conn.execute('SELECT * FROM proxies WHERE validated=? AND protocol LIKE ? ORDER BY RANDOM() LIMIT ?', (True, '%' + protocol + '%', max_count))
+    else:
+        r = conn.execute('SELECT * FROM proxies WHERE validated=? AND protocol LIKE ? ORDER BY RANDOM()', (True, '%' + protocol + '%'))
+    proxies = [Proxy.decode(row) for row in r]
+    r.close()
+    conn_lock.release()
+    proc_lock.release()
+    return proxies
+
 def pushFetcherResult(name, proxies_cnt):
     """
     更新爬取器的状态，每次在完成一个网站的爬取之后，调用本函数
